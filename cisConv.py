@@ -5,6 +5,7 @@ import csv
 import re
 import pprint
 import code
+import codecs
 
 # https://www.debuggex.com/
 # So far this works on every file tested.
@@ -48,9 +49,10 @@ def parseText(inFileName):
     with open(inFileName, 'rt') as inFile:
         print(f'Parsing {inFileName}')
         outFileName = f'{inFileName}.csv'
-        with open(outFileName, 'wt') as outFile:
+        with open(outFileName, 'wt', encoding='utf-8') as outFile:
             print(f'Writing to {outFileName}')
-            cw = csv.DictWriter(outFile, fieldnames=list(buildBlank().keys()))
+            outFile.write(str(codecs.BOM_UTF8))
+            cw = csv.DictWriter(outFile, fieldnames=list(buildBlank().keys()), quoting=csv.QUOTE_ALL)
             cw.writeheader()
             metrics_total = 0
             metrics_good = 0
@@ -60,6 +62,7 @@ def parseText(inFileName):
             force_write = False
 
             for line in inFile:
+                line = line.replace('\n', '')
                 metrics_total += 1
                 # line = line.strip()
                 # Skip garbage lines here
