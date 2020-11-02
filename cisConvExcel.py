@@ -101,7 +101,7 @@ def parseText(inFileName):
                             break
                     row = buildBlank()
                     # code.interact(local=locals())
-                    row['Benchmark'] = inFileName[:-4]
+                    row['Benchmark'] = os.path.basename(inFileName)[:-4]
                     row['CIS #'] = match.group('cisnum')
                     row['Type'] = match.group('level')
                     row['Policy'] = match.group('policy')
