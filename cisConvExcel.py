@@ -6,6 +6,7 @@ import re
 import pprint
 import code
 import codecs
+import os
 
 # https://www.debuggex.com/
 # So far this works on every file tested.
@@ -61,7 +62,7 @@ def parseText(inFileName):
     with open(inFileName, 'rt') as inFile:
         print(f'Parsing {inFileName}')
         with xlsxwriter.Workbook(f'{inFileName[:-4]}.xlsx') as workbook:
-            worksheet = workbook.add_worksheet(inFileName[:31])
+            worksheet = workbook.add_worksheet(os.path.basename(inFileName)[:31])
             format_text = workbook.add_format({'num_format': '@'})
 
             metrics_total = 0
