@@ -198,8 +198,3 @@ class CISConverterExcel(CISConverter):
             self.xcol += 1
         self.xcol = 0
         self.xrow += 1
-
-
-if __name__ == '__main__':
-    ccc = CISConverterCSV()
-    cce = CISConverterExcel()
