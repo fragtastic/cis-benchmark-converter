@@ -29,7 +29,8 @@ modes = [
 xrow = 0
 xcol = 0
 
-def buildBlank():
+
+def build_blank():
     return {
         'Benchmark': None,
         'CIS #': '',
@@ -47,6 +48,7 @@ def buildBlank():
         'CIS Controls': ''
     }
 
+
 def write_row(worksheet, format_text, values):
     global xcol, xrow
     for val in values:
@@ -56,7 +58,7 @@ def write_row(worksheet, format_text, values):
     xrow += 1
 
 
-def parseText(inFileName):
+def parse_text(inFileName):
     with open(inFileName, 'rt') as inFile:
         print(f'Parsing {inFileName}')
         with xlsxwriter.Workbook(f'{inFileName[:-4]}.xlsx') as workbook:
@@ -70,7 +72,7 @@ def parseText(inFileName):
             cur_mode = None
             force_write = False
 
-            write_row(worksheet, format_text, list(buildBlank().keys()))
+            write_row(worksheet, format_text, list(build_blank().keys()))
 
             for line in inFile:
                 line = line.replace('\n', '')
@@ -97,7 +99,7 @@ def parseText(inFileName):
                         metrics_good += 1
                         if force_write:
                             break
-                    row = buildBlank()
+                    row = build_blank()
                     # code.interact(local=locals())
                     row['Benchmark'] = os.path.basename(inFileName)[:-4]
                     row['CIS #'] = match.group('cisnum')
@@ -134,12 +136,12 @@ def parseText(inFileName):
                             print('ERROR: Bad type. This should never happen.')
                             exit(-1)
 
-
     print(f'Total lines: {metrics_total}')
     print(f'Written Rows: {metrics_good}')
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('inputFile', type=str, help='CIS text dump to parse.')
     args = parser.parse_args()
-    parseText(args.inputFile)
+    parse_text(args.inputFile)

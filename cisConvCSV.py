@@ -25,7 +25,8 @@ modes = [
     'CIS Controls'
 ]
 
-def buildBlank():
+
+def build_blank():
     return {
         'Benchmark': None,
         'CIS #': '',
@@ -43,14 +44,15 @@ def buildBlank():
         'CIS Controls': ''
     }
 
-def parseText(inFileName):
+
+def parse_text(inFileName):
     with open(inFileName, 'rt') as inFile:
         print(f'Parsing {inFileName}')
         outFileName = f'{inFileName}.csv'
         with open(outFileName, 'wt', encoding='utf-8') as outFile:
             print(f'Writing to {outFileName}')
             outFile.write(str(codecs.BOM_UTF8))
-            cw = csv.DictWriter(outFile, fieldnames=list(buildBlank().keys()), quoting=csv.QUOTE_ALL)
+            cw = csv.DictWriter(outFile, fieldnames=list(build_blank().keys()), quoting=csv.QUOTE_ALL)
             cw.writeheader()
             metrics_total = 0
             metrics_good = 0
@@ -84,7 +86,7 @@ def parseText(inFileName):
                         metrics_good += 1
                         if force_write:
                             break
-                    row = buildBlank()
+                    row = build_blank()
                     # code.interact(local=locals())
                     row['Benchmark'] = inFileName[:-4]
                     row['CIS #'] = match.group('cisnum')
@@ -121,12 +123,12 @@ def parseText(inFileName):
                             print('ERROR: Bad type. This should never happen.')
                             exit(-1)
 
-
     print(f'Total lines: {metrics_total}')
     print(f'Written Rows: {metrics_good}')
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('inputFile', type=str, help='CIS text dump to parse.')
     args = parser.parse_args()
-    parseText(args.inputFile)
+    parse_text(args.inputFile)
