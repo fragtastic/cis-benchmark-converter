@@ -8,8 +8,6 @@ import code
 import codecs
 import os
 
-# https://www.debuggex.com/
-# So far this works on every file tested.
 searcher = re.compile(r'^((?P<cisnum>(\d+\.)+\d+)\s)(\((?P<level>.+?)\)\s)?((?P<policy>.+))(\s\((?P<scored>Scored|Not\ Scored|Automated|Manual)\))$')
 
 garbage_list = [

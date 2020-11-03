@@ -7,8 +7,6 @@ import pprint
 import code
 import codecs
 
-# https://www.debuggex.com/
-# So far this works on every file tested.
 searcher = re.compile(r'^((?P<cisnum>(\d+\.)+\d+)\s)(\((?P<level>.+?)\)\s)?((?P<policy>.+))(\s\((?P<scored>Scored|Not\ Scored)\))$')
 
 garbage_list = [
