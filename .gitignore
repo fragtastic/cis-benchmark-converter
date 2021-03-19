@@ -7,3 +7,4 @@ run.sh
 *.xlsx
 venv/
 benchmarks/
+pdfs/
