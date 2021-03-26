@@ -1,11 +1,19 @@
 # cis-benchmark-to-csv
-Converts dumped text from CIS Benchmark PDFs into usable CSV & Excel files.
+Converts **dumped text** from CIS Benchmark PDFs into usable CSV & Excel files.
 
 For expected numbers see the [reference results](reference_results.md) of the conversions.
 
 ## Requirements
 - Python 3
 - For Excel output install the `xlsxwriter` Python package
+
+## Dumping Text
+```
+In Adobe Acrobat DC:
+- File -> Export To -> Text (Plain)
+- Ensure export is set to Settings -> UTF-8
+- Uncheck "View Result"
+```
 
 ## Program Usage
 ```
