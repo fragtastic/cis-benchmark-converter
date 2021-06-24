@@ -65,7 +65,7 @@ class CISConverter:
         logging.debug(row)
 
     def parse_text(self):
-        with open(self.args.inputFilePath, 'rt') as inFile:
+        with open(self.args.inputFilePath, mode='rt', encoding='utf8') as inFile:
             logging.info(f'Parsing {self.args.inputFilePath}')
 
             row = None
