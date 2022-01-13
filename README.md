@@ -8,6 +8,7 @@ For expected numbers see the [reference results](reference_results.md) of the co
 - For Excel output install the `xlsxwriter` Python package
 
 ## Dumping Text
+**Warning:** Adobe Acrobat DC on Windows will produce broken txt files. Use Adobe Acrobat DC on MacOS only.
 ```
 In Adobe Acrobat DC:
 - File -> Export To -> Text (Plain)
