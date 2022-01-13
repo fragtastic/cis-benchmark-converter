@@ -24,7 +24,7 @@ class CISConverter:
         self.metrics_total = 0
         self.metrics_good = 0
 
-    searcher = re.compile(f'^(?P<cisnum>[\.\d]+)(?:\s+\((?P<level>[\w\d]+)\))?(?:\s+(?P<policy>.+))(?:\s\((?P<scored>.*)\)\s?)$')
+    searcher = re.compile(f'^(?P<cisnum>[\.\d]+)(?:\s+\((?P<level>[\w\d]+)\))?(?:\s+(?P<policy>.+))(?:\s\((?P<scored>Not\ Scored|Scored|Manual|Automated)\)\s?)$')
 
     garbage_list = [
         '| P a g e'
