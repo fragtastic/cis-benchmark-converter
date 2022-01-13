@@ -24,10 +24,15 @@ class CISConverter:
         self.metrics_total = 0
         self.metrics_good = 0
 
-    searcher = re.compile(f'^(?P<cisnum>[\.\d]+)(?:\s+\((?P<level>[\w\d]+)\))?(?:\s+(?P<policy>.+))(?:\s\((?P<scored>.+)\)\s?)$')
+    searcher = re.compile(f'^(?P<cisnum>[\.\d]+)(?:\s+\((?P<level>[\w\d]+)\))?(?:\s+(?P<policy>.+))(?:\s\((?P<scored>.*)\)\s?)$')
 
     garbage_list = [
         '| P a g e'
+    ]
+    
+    appendix_list = [
+        'Appendix: Summary Table',
+        'Appendix: Recommendation Summary Table'
     ]
 
     modes = [
@@ -123,7 +128,7 @@ class CISConverter:
                             line = line.replace('\uf0b7 ', '', 1)
                         line = line.replace(' ', '', 1)
                         # check if we have transitioned to Appendix
-                        if line.startswith('Appendix: Summary Table'):
+                        if any(ele in line for ele in CISConverter.appendix_list):
                             cur_mode = None
                             force_write = True
                             continue
