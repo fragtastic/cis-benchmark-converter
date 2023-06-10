@@ -139,7 +139,6 @@ class CISConverter:
                     row['Policy'] = match.group('policy')
                     row['Scored'] = match.group('scored')
                     cur_mode = None
-                    logging.info(row)
                     continue
 
                 else:
