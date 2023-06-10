@@ -24,7 +24,10 @@ class CISConverter:
         self.metrics_total = 0
         self.metrics_good = 0
 
-    searcher = re.compile(f'^(?P<cisnum>[\.\d]+)(?:\s+\((?P<level>[\w\d]+)\))?(?:\s+(?P<policy>.+))(?:\s\((?P<scored>Not\ Scored|Scored|Manual|Automated)\)\s?)$')
+    searcher = re.compile(f'^?(?P<cisnum>[\.\d]+)(?:\s+\((?P<level>[\w\d]+)\))?(?:\s+(?P<policy>.+))(?:\s*\((?P<scored>Not\ Scored|Scored|Manual|Automated)\)\s*)$')
+    section_start_searcher = re.compile(f'^?(?P<cisnum>[\.\d]+)(?:\s+\((?P<level>[\w\d]+)\))?')
+    section_end_searcher = re.compile(f'\((Not\ Scored|Scored|Manual|Automated)\)\s*$')
+    before_recommendations_searcher = re.compile(f'^Recommendations\n$')
 
     garbage_list = [
         '| P a g e'
@@ -73,13 +76,23 @@ class CISConverter:
         with open(self.args.inputFilePath, mode='rt', encoding='utf8') as inFile:
             logging.info(f'Parsing {self.args.inputFilePath}')
 
+            before_recommendations = True
+            section_header_text = ''
+            section_header_scanning = False
             row = None
             cur_mode = None
             force_write = False
-
+            empty_line_added = False
             self.write_header()
+            found_sections = []
 
             for line in inFile:
+                if before_recommendations:
+                    if CISConverter.before_recommendations_searcher.match(line):
+                        before_recommendations = False
+                    else:
+                        continue
+
                 # line = line.replace('\n', '')
                 logging.debug(f'Line: "{line}"')
                 self.metrics_total += 1
@@ -87,6 +100,19 @@ class CISConverter:
                 # Skip garbage lines here
                 if any(ele in line for ele in CISConverter.garbage_list):
                     continue
+
+                match = CISConverter.section_start_searcher.search(line)
+                if match:
+                    section_header_text = ''
+                    section_header_scanning = True
+                if section_header_scanning:
+                    section_header_text += line
+                    match = CISConverter.section_end_searcher.search(line)
+                    if match:
+                        section_header_scanning = False
+                        line = section_header_text.replace('\n','')
+                    else:
+                        continue
 
                 match = CISConverter.searcher.match(line)
                 if match or force_write:
@@ -106,23 +132,29 @@ class CISConverter:
                         if force_write:
                             break
                     row = self.build_blank()
+                    found_sections = []
                     row['Benchmark'] = os.path.basename(self.args.inputFilePath)[:-4]
                     row['CIS #'] = match.group('cisnum')
                     row['Type'] = match.group('level')
                     row['Policy'] = match.group('policy')
                     row['Scored'] = match.group('scored')
                     cur_mode = None
+                    logging.info(row)
                     continue
 
                 else:
                     mode_set = False
                     for mode in CISConverter.modes:
-                        if line.startswith(f'{mode}:'):
+                        if re.match(f'^?{mode}:\s*$', line):
                             cur_mode = mode
+                            if mode in found_sections:
+                                logging.error("section {} overflows the following one: {}".format(mode, row['CIS #']))
+                                exit(1)
+                            found_sections.append(mode)
                             mode_set = True
 
                     # Only do something on the line(s) after a mode set
-                    if not mode_set and cur_mode:
+                    if not mode_set and cur_mode and row:
                         # # Perform sanitization here.
                         if cur_mode == 'Profile Applicability':
                             line = line.replace('\uf0b7 ', '', 1)
@@ -134,7 +166,9 @@ class CISConverter:
                             continue
 
                         if isinstance(row[cur_mode], str):
-                            row[cur_mode] += line
+                            if len(line.strip()) > 0 or not empty_line_added:
+                                row[cur_mode] += line
+                            empty_line_added = len(line.strip()) == 0 
                         elif isinstance(row[cur_mode], list):
                             row[cur_mode].append(line.strip())
                         else:
